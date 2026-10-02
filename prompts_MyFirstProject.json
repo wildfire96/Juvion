@@ -1,0 +1,122 @@
+{
+    "Workshop": [
+        {
+            "name": "Default Workshop Prompt",
+            "text": "I need your help with my project. Please provide creative brainstorming and ideas.",
+            "default": true,
+            "model": "Local Model",
+            "api": "Local",
+            "max_tokens": 200,
+            "temperature": 0.7,
+            "provider": "Local"
+        },
+        {
+            "name": "Analysis",
+            "text": "This is a dummy prompt for testing purposes.",
+            "default": false,
+            "api": "Local",
+            "model": "cognitivecomputations/dolphin3.0-r1-mistral-24b:free",
+            "max_tokens": 20000,
+            "temperature": 0.7,
+            "provider": "OpenRouter",
+            "type": "prompt"
+        },
+        {
+            "name": "Test",
+            "text": "This is a test prompt.",
+            "default": false,
+            "provider": "Local",
+            "model": "Local Model",
+            "max_tokens": 20000,
+            "temperature": 0.7,
+            "type": "prompt"
+        }
+    ],
+    "Summary": [
+        {
+            "name": "Default Summary Prompt",
+            "text": "Provide a concise summary of the project that retains all relevant information and is optimized for token count.",
+            "default": true,
+            "model": "Local Model",
+            "api": "Local",
+            "max_tokens": 200,
+            "temperature": 0.7,
+            "provider": "Local"
+        },
+        {
+            "name": "Token Saver",
+            "text": "Provide a concise summary of the project that retains all relevant information and is optimized for token count. All that counts is that an LLM can read and understand the summary, so it's okay to cut corners and abbreviate, use ampersands and whatever is needed to save tokens.",
+            "default": false,
+            "api": "Local",
+            "model": "google/gemini-2.0-flash-001",
+            "max_tokens": 20000,
+            "temperature": 0.7,
+            "provider": "OpenRouter",
+            "type": "prompt"
+        }
+    ],
+    "Prose": [
+        {
+            "name": "Default Prose Prompt",
+            "text": "You are collaborating with the author to write a scene. Write the scene in {pov} point of view, from the perspective of {pov_character}, and in {tense}.",
+            "default": true,
+            "model": "Local Model",
+            "api": "Local",
+            "max_tokens": 200,
+            "temperature": 0.7,
+            "provider": "Local"
+        },
+        {
+            "name": "OpenRouterTest",
+            "text": "You are collaborating with the author to write a scene. Write the scene in {pov} point of view, from the perspective of {pov_character}, and in {tense}.",
+            "default": false,
+            "provider": "OpenRouter",
+            "model": "liquid/lfm-7b",
+            "max_tokens": 20000,
+            "temperature": 1.0,
+            "type": "prompt"
+        }
+    ],
+    "Rewrite": [
+        {
+            "name": "Default Rewrite Prompt",
+            "text": "Rewrite the passage for clarity.",
+            "default": true,
+            "model": "Local Model",
+            "api": "Local",
+            "max_tokens": 200,
+            "temperature": 0.7,
+            "provider": "Local"
+        },
+        {
+            "name": "Clarity",
+            "text": "Rewrite the selected text for clarity. If there are adverbs, replace them with strong verbs.",
+            "default": false,
+            "provider": "OpenRouter",
+            "model": "liquid/lfm-7b",
+            "max_tokens": 20000,
+            "temperature": 0.7,
+            "type": "prompt"
+        },
+        {
+            "name": "Show don't tell",
+            "text": "Look at this passage and rewrite it in a more active way: \"Show, don't tel\"l. Instead of telingl us how something looks, describe it. Instead of assuming feelings of a character, show them in their actions, words, facial expressions, etc.",
+            "default": false,
+            "provider": "Local",
+            "model": "Local Model",
+            "max_tokens": 2000,
+            "temperature": 0.7,
+            "type": "prompt"
+        },
+        {
+            "name": "Dialogue Tags",
+            "text": "Please check for dialogue tags that are not \"said\" or \"asked\" (or their lemmas) and rephrase them. \nIf no dialogue tag is needed to identify the speaker, delete the tag completely.\nIf the speaker has to be identified, use \"said\"/\"asked\" (or their lemma).",
+            "default": false,
+            "provider": "OpenRouter",
+            "model": "allenai/llama-3.1-tulu-3-405b",
+            "max_tokens": 2000,
+            "temperature": 0.7,
+            "type": "prompt"
+        }
+    ]
+}

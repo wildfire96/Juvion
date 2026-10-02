@@ -1,0 +1,41 @@
+# Ignore Python cache and compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore environment files (virtual environments)
+env/
+venv/
+.venv/
+
+# Ignore personal settings and API keys
+settings.json
+conversations.json
+
+# Ignore backups and temporary files
+*.bak.json
+*.zip
+*.log
+*.tmp
+*.bak
+
+# Ignore project-specific files (optional)
+Projects/
+*.txt
+!requirements.txt
+
+# Ignore Windows/Mac system files
+.DS_Store
+Thumbs.db
+*.bak"
+
+# Ignore pyinstaller directories
+build
+dist
+
+# Local browser profiles contain cookies, sessions and cache.
+web_history/
+.resources-version
+.migration-complete
+.smoke-ready

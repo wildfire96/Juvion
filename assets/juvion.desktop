@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=Juvion
+GenericName=Estúdio Literário
+Comment=Software profissional para escrita criativa, planejamento e publicação de livros
+Exec=juvion %F
+Icon=juvion
+Terminal=false
+Categories=Office;WordProcessor;TextEditor;Publishing;
+MimeType=application/x-juvion;
+StartupNotify=true
+StartupWMClass=Juvion
+Keywords=writing;book;novel;manuscript;fiction;editorial;
