@@ -1,0 +1,58 @@
+name: Verify and build Juvion
+on:
+  push:
+    paths:
+      - '**.py'
+      - 'requirements.txt'
+      - 'juvion.spec'
+      - '.github/workflows/build-osx-arm64.yml'
+  workflow_dispatch:
+    inputs:
+      build_packages:
+        description: Build native executable packages
+        type: boolean
+        default: true
+jobs:
+  verify:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-22.04, macos-latest]
+    runs-on: ${{ matrix.os }}
+    env:
+      QT_QPA_PLATFORM: offscreen
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.11'
+      - name: Install Qt system libraries
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libegl1 libopengl0 libxcb-xinerama0
+      - name: Install dependencies
+        run: python -m pip install -r requirements.txt
+      - name: Compile application modules
+        run: python -m compileall -q -x '(venv|\.venv|\.git|build|dist)[/\\]' .
+      - name: Regression checks
+        run: python -m unittest discover -s tests -v
+      - name: Library startup
+        run: python tests/smoke_app.py
+      - name: Build native package
+        if: github.event_name == 'workflow_dispatch' && inputs.build_packages
+        run: python package_app.py
+      - name: Check Windows executable
+        if: github.event_name == 'workflow_dispatch' && inputs.build_packages && runner.os == 'Windows'
+        run: python tests/smoke_packaged.py dist/Juvion/Juvion.exe
+      - name: Check Linux executable
+        if: github.event_name == 'workflow_dispatch' && inputs.build_packages && runner.os == 'Linux'
+        run: python tests/smoke_packaged.py dist/Juvion/Juvion
+      - name: Check macOS executable
+        if: github.event_name == 'workflow_dispatch' && inputs.build_packages && runner.os == 'macOS'
+        run: python tests/smoke_packaged.py dist/Juvion.app/Contents/MacOS/Juvion
+      - name: Save packages
+        if: github.event_name == 'workflow_dispatch' && inputs.build_packages
+        uses: actions/upload-artifact@v4
+        with:
+          name: Juvion-${{ runner.os }}-${{ runner.arch }}
+          path: dist/
+          if-no-files-found: error

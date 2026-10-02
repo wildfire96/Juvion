@@ -1,0 +1,134 @@
+from gettext import gettext as _
+from typing import TYPE_CHECKING
+
+from PyQt5.QtCore import QSize, Qt
+from PyQt5.QtGui import QColor
+from PyQt5.QtWidgets import QAction, QToolBar, QVBoxLayout, QWidget
+
+from settings.theme_manager import ThemeManager
+
+if TYPE_CHECKING:
+    from .project_window import ProjectWindow
+
+
+class ActivityBar(QWidget):
+    """Vertical icon panel for switching between views, similar to VS Code Activity Bar."""
+    def __init__(self, controller: "ProjectWindow", tint_color: QColor = QColor("black"), position: str = "left"):
+        super().__init__()
+        self.controller = controller  # Reference to ProjectWindow
+        self.tint_color = tint_color
+        self.position = position  # 'left' or 'right' for future feature
+        self.current_view = None
+        self.toolbar = QToolBar("Activity Bar")
+        self.toolbar.setObjectName("ActivityBar")
+        self.init_ui()
+
+    def init_ui(self):
+        layout = QVBoxLayout(self)
+        layout.addWidget(self.toolbar)
+        layout.setContentsMargins(0, 0, 0, 0)
+        self.toolbar.setStyleSheet("QToolBar#ActivityBar { border: 0px; padding: 4px 0px; }")
+        self.toolbar.setOrientation(Qt.Orientation.Vertical)
+        self.toolbar.setFixedWidth(42)  # Compact width for activity bar
+        self.toolbar.setIconSize(QSize(20, 20))
+
+        # Actions
+        self.outline_action = self.add_action(
+            "assets/icons/pen-tool.svg",
+            "Estrutura e cenas",
+            "Estrutura e cenas — organize atos, capítulos e cenas da obra.",
+            self.controller.toggle_outline_view
+        )
+        self.work_action = self.add_action(
+            "assets/icons/book.svg",
+            "A obra & publicação",
+            "A obra & publicação — sinopse, ficha técnica, capa, metadados e checklist de lançamento.",
+            self.controller.toggle_work_details_view
+        )
+        self.search_action = self.add_action(
+            "assets/icons/search.svg",
+            "Buscar",
+            "Buscar — encontre e substitua texto na cena aberta.",
+            self.controller.toggle_search_view
+        )
+        self.compendium_action = self.add_action(
+            "assets/icons/book-open.svg",
+            "Universo",
+            "Universo — consulte personagens, lugares, eventos e regras da obra.",
+            self.controller.toggle_compendium_view
+        )
+        self.prompts_action = self.add_action(
+            "assets/icons/ai-script-icon.svg",
+            "Musa IA",
+            "Musa IA — escolha e ajuste os prompts usados pela assistência de escrita.",
+            self.controller.toggle_prompts_view
+        )
+        self.progress_action = self.add_action(
+            "assets/icons/bar-chart-2.svg",
+            "Progresso",
+            "Progresso da obra — acompanhe metas, capítulos e conclusão do livro.",
+            self.controller.toggle_progress_view
+        )
+        self.revision_action = self.add_action(
+            "assets/icons/feather.svg",
+            "Revisão literária",
+            "Revisão literária — analise repetições, ritmo, diálogos e aprimore com IA.",
+            self.controller.toggle_revision_view
+        )
+        self.map_action = self.add_action(
+            "assets/icons/map.svg",
+            "Mapa",
+            "Mapa — visualize o mundo e ligue lugares ao caderno de fichas.",
+            self.controller.toggle_map_view
+        )
+
+        # Set initial state
+        self.outline_action.setChecked(True)
+        self.current_view = "outline"
+
+    def add_action(self, icon_path, label, tooltip, callback):
+        action = QAction(ThemeManager.get_tinted_icon(icon_path, self.tint_color), label, self)
+        action.setToolTip(tooltip)
+        action.setStatusTip(tooltip)
+        action.setCheckable(True)
+        action.triggered.connect(lambda: self.handle_action(action, callback))
+        self.toolbar.addAction(action)
+        return action
+
+    def handle_action(self, action, callback):
+        """Handle action clicks, ensuring only one is checked and toggling sidebar."""
+        self.controller.clear_search_highlights()  # Clear search highlights
+        if action.isChecked():
+            # Uncheck other actions
+            for act in [self.outline_action, self.work_action, self.search_action, self.compendium_action, self.prompts_action, self.progress_action, self.revision_action, self.map_action]:
+                if act != action:
+                    act.setChecked(False)
+            # Set current view
+            view_map = {
+                self.outline_action: "outline",
+                self.work_action: "work",
+                self.search_action: "search",
+                self.compendium_action: "compendium",
+                self.prompts_action: "prompts",
+                self.progress_action: "progress",
+                self.revision_action: "revision",
+                self.map_action: "map"
+            }
+            self.current_view = view_map.get(action)
+            callback(True)  # Show the view
+        else:
+            action.setChecked(False)
+            callback(False)  # Hide the view
+            self.current_view = None
+
+    def update_tint(self, tint_color):
+        """Update icon tints when theme changes."""
+        self.tint_color = tint_color
+        self.outline_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/pen-tool.svg", tint_color))
+        self.work_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/book.svg", tint_color))
+        self.search_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/search.svg", tint_color))
+        self.compendium_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/book-open.svg", tint_color))
+        self.prompts_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/ai-script-icon.svg", tint_color))
+        self.progress_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/bar-chart-2.svg", tint_color))
+        self.revision_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/feather.svg", tint_color))
+        self.map_action.setIcon(ThemeManager.get_tinted_icon("assets/icons/map.svg", tint_color))
